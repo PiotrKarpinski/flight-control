@@ -1,4 +1,7 @@
-import { Form, Input, Button, Checkbox } from 'antd';
+import {Form, Input, Button, Checkbox, Modal} from 'antd';
+import {useState} from 'react';
+import {signup} from "../actions/SessionApi";
+
 const layout = {
     labelCol: {
         span: 8,
@@ -14,28 +17,66 @@ const tailLayout = {
     },
 };
 
-const JoinModal = () => {
+const JoinModal = (props) => {
     const onFinish = (values) => {
-        console.log('Success:', values);
+        const user = {...values}
+        setConfirmLoading(true)
+        signup(user, () => {
+            setConfirmLoading(false)
+            close()
+        })
     };
 
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
 
+    const [confirmLoading, setConfirmLoading] = useState(false)
+
+
+    const handleCancel = () => {
+        close()
+    }
+
+    const handleChange = (values) => {
+
+    }
+
+    const {close, show} = props
+
     return (
+        <Modal
+        visible={show}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+        >
+
+
         <Form
             {...layout}
             name="basic"
             initialValues={{
                 remember: true,
             }}
+            onValuesChange={(values) => handleChange(values)}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
         >
             <Form.Item
                 label="First name"
                 name="first_name"
+                rules={[
+                    {
+                        required: true,
+                        message: 'Please input your first name!',
+                    },
+                ]}
+            >
+                <Input />
+            </Form.Item>
+            <Form.Item
+                label="Last name"
+                name="last_name"
                 rules={[
                     {
                         required: true,
@@ -71,16 +112,13 @@ const JoinModal = () => {
                 <Input.Password />
             </Form.Item>
 
-            <Form.Item {...tailLayout} name="is_admin" valuePropName="checked">
-                <Checkbox>Give me admin account</Checkbox>
-            </Form.Item>
-
             <Form.Item {...tailLayout}>
                 <Button type="primary" htmlType="submit">
                     Submit
                 </Button>
             </Form.Item>
         </Form>
+        </Modal>
     );
 };
 

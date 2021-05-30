@@ -1,5 +1,9 @@
+@import '~antd/dist/antd.css';
+@import "style/LoginPage.css";
+
 .App {
   text-align: center;
+  height: 100vh;
 }
 
 .App-logo {

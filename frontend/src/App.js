@@ -6,6 +6,7 @@ import BookFlight from "./components/BookFlight";
 import AdminView from "./components/AdminView";
 import Flights from "./components/Flights";
 import LoginPage from "./components/LoginPage";
+import Home from "./components/Home";
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
         <Route
             exact
             path="/"
-            component={Flights}
+            component={Home}
         />
         <Route
             exact

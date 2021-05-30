@@ -12,8 +12,8 @@ class PrivateRoute extends Component {
         this.checkAccess();
     }
 
-    roleChecker = (requiredRole, roles) => {
-        return roles.includes(requiredRole)
+    roleChecker = (requiredRole, user) => {
+        return user && user.roles.includes(requiredRole)
     }
 
 
@@ -23,14 +23,15 @@ class PrivateRoute extends Component {
 
         // your fetch request
         authenticate((result) => {
-            haveAccess = this.roleChecker(userRole, result.user.roles); // true || false
-            !haveAccess && history.push('/');
-            this.setState({
-                haveAccess,
-                loaded: true,
-            });
-
-
+            haveAccess = this.roleChecker(userRole, result.user); // true || false
+            if (haveAccess) {
+                this.setState({
+                    haveAccess,
+                    loaded: true,
+                });
+            } else {
+                history.push('/');
+            }
         })
 
     }

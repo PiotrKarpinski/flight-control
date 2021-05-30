@@ -4,7 +4,7 @@ export const authenticate = (callback) => {
     axios.get('http://localhost:3001/logged_in',
         {withCredentials: true})
         .then(response => {
-            callback(response)
+            callback(response.data)
         })
         .catch(error => console.log('api errors:', error))
 };
@@ -21,7 +21,7 @@ export const signup = (user, callback) => {
 export const logout = (callback) => {
     axios.post('http://localhost:3001/logout',null,{withCredentials: true})
         .then(response => {
-            callback(response)
+            callback(response.data)
         })
         .catch(error => console.log('api errors:', error))
 };
