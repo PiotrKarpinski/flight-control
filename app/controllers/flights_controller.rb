@@ -4,12 +4,11 @@ class FlightsController < ApplicationController
   # GET /flights or /flights.json
   def index
     @flights = Flight.all
-    render json: @flights
-
   end
 
   # GET /flights/1 or /flights/1.json
   def show
+    @flight = Flight.find_by(id: params[:id])
   end
 
   # GET /flights/new
@@ -24,15 +23,13 @@ class FlightsController < ApplicationController
   # POST /flights or /flights.json
   def create
     @flight = Flight.new(flight_params)
-
-    respond_to do |format|
-      if @flight.save
-        format.html { redirect_to @flight, notice: "Flight was successfully created." }
-        format.json { render :show, status: :created, location: @flight }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @flight.errors, status: :unprocessable_entity }
-      end
+    if @flight.save
+      render json: {
+        message: 'flight created',
+        status: :ok
+      }
+    else
+      render json: @flight.errors, status: :unprocessable_entity
     end
   end
 
@@ -66,6 +63,6 @@ class FlightsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def flight_params
-      params.require(:flight).permit(:arrival_time, :take_off_time, :destination, :origin, :seats)
+      params.require(:data).permit(:arrival_time, :take_off_time, :destination, :origin, :seats_amount, :query)
     end
 end

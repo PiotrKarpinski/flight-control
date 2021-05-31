@@ -1,1 +1,2 @@
-json.partial! "flights/flight", flight: @flight
+json.extract! @flight, :id, :origin, :destination
+json.seats @flight.seats

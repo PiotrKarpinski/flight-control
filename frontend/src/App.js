@@ -15,14 +15,14 @@ function App() {
       <Switch>
         <PrivateRoute
             exact
-            path="/book_flight"
-            userRole="user"
+            path="/book_flight/:id"
+            userRoles={["user", "admin"]}
             component={BookFlight}
         />
         <PrivateRoute
             exact
             path="/admin"
-            userRole="admin"
+            userRoles="admin"
             component={AdminView}
         />
         <Route

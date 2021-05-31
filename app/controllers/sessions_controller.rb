@@ -17,9 +17,11 @@ class SessionsController < ApplicationController
   end
   def is_logged_in?
     if logged_in? && current_user
+      role = UserRole.find_by(id: current_user.user_role_id)
       render json: {
         logged_in: true,
-        user: current_user
+        role: role.name,
+        user: current_user.attributes.slice('first_name')
       }
     else
       render json: {

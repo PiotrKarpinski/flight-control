@@ -1,63 +1,50 @@
 import React, { useState } from 'react';
-import { Input, AutoComplete } from 'antd';
+import {Input, AutoComplete, Select, Spin} from 'antd';
+import {fetchSelectData} from "../actions/DataApi";
 
-function getRandomInt(max, min = 0) {
-    return Math.floor(Math.random() * (max - min + 1)) + min; // eslint-disable-line no-mixed-operators
-}
 
-const searchResult = (query) =>
-    new Array(getRandomInt(5))
-        .join('.')
-        .split('.')
-        .map((_, idx) => {
-            const category = `${query}${idx}`;
-            return {
-                value: category,
-                label: (
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-            <span>
-              Found {query} on{' '}
-                <a
-                    href={`https://s.taobao.com/search?q=${query}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                {category}
-              </a>
-            </span>
-                        <span>{getRandomInt(200, 100)} results</span>
-                    </div>
-                ),
-            };
-        });
-
-const Complete = () => {
+const SearchFlights = () => {
     const [options, setOptions] = useState([]);
+    const [fetching, setFetching] = useState(false)
+    const [value, setValue] = React.useState([]);
 
     const handleSearch = (value) => {
         setOptions(value ? searchResult(value) : []);
     };
 
-    const onSelect = (value) => {
-        console.log('onSelect', value);
-    };
+
+    const searchResult = (query) => {
+        setOptions([]);
+        setFetching(true);
+        fetchSelectData('flights', query, (results) => {
+            const newOptions = results.map((flight) => ({
+                label: `${flight.origin} to ${flight.destination}`,
+                value: flight.id,
+            }));
+            setOptions(newOptions);
+            setFetching(false);
+        })
+    }
+
 
     return (
-        <AutoComplete
-            dropdownMatchSelectWidth={252}
-            style={{
-                width: 300,
-            }}
-            options={options}
-            onSelect={onSelect}
+
+        <Select
+            labelInValue
+            filterOption={false}
             onSearch={handleSearch}
-        >
-            <Input.Search size="large" placeholder="input here" enterButton />
-        </AutoComplete>
+            notFoundContent={fetching ? <Spin size="small" /> : null}
+            options={options}
+            mode="multiple"
+            value={value}
+            placeholder="Search flights"
+            onChange={(newValue) => {
+                setValue(newValue);
+            }}
+            style={{
+                width: '100%',
+            }}
+        />
     );
 };
+ export default SearchFlights;

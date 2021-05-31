@@ -1,1 +1,1 @@
-json.array! @flights
+json.array! @flights, partial: "flights/flight", as: :flight

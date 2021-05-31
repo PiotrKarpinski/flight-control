@@ -18,7 +18,7 @@ export const fetchAllData = (resourceName, callback) => {
         {withCredentials: true})
         .then(response => {
             if (response.data) {
-                callback(response.data[resourceName])
+                callback(response.data)
             } else {
                 callback({})
             }
@@ -29,7 +29,7 @@ export const fetchAllData = (resourceName, callback) => {
 
 export const fetchSelectData = (resourceName, q, callback) => {
         axios.get(`http://localhost:3001/${resourceName}`,
-            {withCredentials: true, params: q})
+            {withCredentials: true, params: {query: q}})
             .then(response => {
                 callback(response.data)
             })

@@ -12,18 +12,18 @@ class PrivateRoute extends Component {
         this.checkAccess();
     }
 
-    roleChecker = (requiredRole, user) => {
-        return user && user.roles.includes(requiredRole)
+    roleChecker = (requiredRoles, role) => {
+        return requiredRoles.includes(role)
     }
 
 
     checkAccess = () => {
-        const { userRole, history } = this.props;
+        const { userRoles, history } = this.props;
         let { haveAccess } = this.state;
 
         // your fetch request
         authenticate((result) => {
-            haveAccess = this.roleChecker(userRole, result.user); // true || false
+            haveAccess = this.roleChecker(userRoles, result.role); // true || false
             if (haveAccess) {
                 this.setState({
                     haveAccess,

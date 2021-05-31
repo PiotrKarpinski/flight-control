@@ -22,15 +22,25 @@ class BookingsController < ApplicationController
   # POST /bookings or /bookings.json
   def create
     @booking = Booking.new(booking_params)
-
-    respond_to do |format|
-      if @booking.save
-        format.html { redirect_to @booking, notice: "Booking was successfully created." }
-        format.json { render :show, status: :created, location: @booking }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @booking.errors, status: :unprocessable_entity }
+    @booking.user_id = current_user.id
+    seats = params[:data]["seats"]
+    if @booking.save
+      seats.each do |seat|
+        @seat = Seat.new(
+          passenger_first_name: params[:data]["first_name"],
+          passenger_last_name: params[:data]["last_name"],
+          code: seat,
+          flight_id: params[:data]["flight_id"],
+          booking_id: @booking.id
+        )
+        @seat.save
       end
+      render json: {
+        message: 'booking created',
+        status: :ok
+      }
+    else
+      render json: @booking.errors, status: :unprocessable_entity
     end
   end
 
@@ -57,13 +67,14 @@ class BookingsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_booking
-      @booking = Booking.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def booking_params
-      params.require(:booking).permit(:total)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_booking
+    @booking = Booking.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def booking_params
+    params.require(:data).permit(:total, :seats, :flight_id, :user_id)
+  end
 end
