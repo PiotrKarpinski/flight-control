@@ -3,11 +3,11 @@ import {Input, AutoComplete, Select, Spin} from 'antd';
 import {fetchSelectData} from "../actions/DataApi";
 
 
-const SearchFlights = () => {
+const SearchFlights = (props) => {
     const [options, setOptions] = useState([]);
     const [fetching, setFetching] = useState(false)
     const [value, setValue] = React.useState([]);
-
+    const {onSelect} = props
     const handleSearch = (value) => {
         setOptions(value ? searchResult(value) : []);
     };
@@ -17,18 +17,13 @@ const SearchFlights = () => {
         setOptions([]);
         setFetching(true);
         fetchSelectData('flights', query, (results) => {
-            const newOptions = results.map((flight) => ({
-                label: `${flight.origin} to ${flight.destination}`,
-                value: flight.id,
-            }));
-            setOptions(newOptions);
+            setOptions(results.content);
             setFetching(false);
         })
     }
 
 
     return (
-
         <Select
             labelInValue
             filterOption={false}
@@ -38,8 +33,10 @@ const SearchFlights = () => {
             mode="multiple"
             value={value}
             placeholder="Search flights"
-            onChange={(newValue) => {
+            onSelect={(newValue) => {
                 setValue(newValue);
+                const id = newValue.value
+                onSelect(id);
             }}
             style={{
                 width: '100%',

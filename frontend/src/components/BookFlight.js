@@ -1,6 +1,21 @@
 import {useEffect, useState} from 'react';
 import {fetchData, postData} from "../actions/DataApi";
-import {Button, DatePicker, Form, Input, Layout, Menu, Modal, Checkbox, Radio, Spin, TimePicker, Row, Col} from "antd";
+import {
+    Button,
+    DatePicker,
+    Form,
+    Input,
+    Layout,
+    Menu,
+    Modal,
+    Checkbox,
+    Radio,
+    Spin,
+    TimePicker,
+    Row,
+    Col,
+    Descriptions
+} from "antd";
 import {logout} from "../actions/SessionApi";
 import Flights from "./Flights";
 import * as React from "react";
@@ -30,7 +45,7 @@ const BookFlight = (props) => {
     const [total, setTotal] = useState(0)
 
 
-    const populateSeatLabels = (amount) => {
+    const populateSeatLabels = (amount, takenSeats) => {
         const rowsAmount = amount / 4
         const plan = []
         for (let idx = 1; idx <= rowsAmount; idx++) {
@@ -38,7 +53,8 @@ const BookFlight = (props) => {
             const seats = []
             for (let i = 0; i < 4; i++) {
                 const seatLetter = letterArray[i]
-                const seat = {label: `${idx}-${seatLetter}`, value: `${idx}-${seatLetter}`}
+                const seatValue= `${idx}-${seatLetter}`
+                const seat = {label: `Seat ${seatValue}`, value: seatValue, disabled: takenSeats.includes(seatValue)}
                 seats.push(seat)
             }
             row.seats = seats
@@ -52,8 +68,6 @@ const BookFlight = (props) => {
     useEffect(() => {
         fetchData(id, 'flights', (result) => {
             setFlight(result)
-            const newSeatOptions = populateSeatLabels(result.seats_amount)
-            setSeatOptions(newSeatOptions)
         })
     }, [])
 
@@ -61,19 +75,19 @@ const BookFlight = (props) => {
         const book = {...values}
         book.flight_id = flight.id
         postData(book, 'bookings', () => {
-
+            props.history.push('/')
         })
     };
 
-    const renderSeats = (seatsAmount) => {
+    const renderSeats = (seatsAmount, takenSeats) => {
 
-        const plan = populateSeatLabels(seatsAmount)
+        const plan = populateSeatLabels(seatsAmount, takenSeats)
         return (
             <> {plan.map(row =>
                 <Row>
-                    {row.seats.map(seat =>
-                        <Col span={6}>
-                            <Checkbox value={seat.value}>{seat.label}</Checkbox>
+                    {row.seats.map((seat, index) =>
+                        <Col key={index} span={6}>
+                            <Checkbox disabled={seat.disabled} value={seat.value}>{seat.label}</Checkbox>
                         </Col>
                     )}
                 </Row>
@@ -94,7 +108,6 @@ const BookFlight = (props) => {
 
 
     return (
-
         <Layout className="layout">
             <Header>
                 <div className="logo"/>
@@ -107,7 +120,22 @@ const BookFlight = (props) => {
                 </Menu>
             </Header>
             {flight &&
-            <Content style={{padding: '20px 50px'}}>
+            <Content style={{padding: '20px 50px', width: '50%'}}>
+                <Row>
+                    <Col offset={8}>
+                    <h2 >{flight.origin} to {flight.destination}</h2>
+                </Col>
+                </Row>
+                <Row style={{margin: '24px 0'}}>
+                    <Col offset={8}>
+                        <Descriptions column={2} bordered size='large'>
+                            <Descriptions.Item label="Take off time:">{flight.take_off_time}</Descriptions.Item>
+                            <Descriptions.Item label="Arrival time:">{flight.arrival_time}</Descriptions.Item>
+                        </Descriptions>
+                    </Col>
+
+                </Row>
+
                 <Form
                     {...layout}
                     name="basic"
@@ -152,7 +180,7 @@ const BookFlight = (props) => {
                         ]}
                     >
                         <Checkbox.Group style={{display: 'block'}} onChange={onChange}>
-                            {renderSeats(flight.seats_amount)}
+                            {renderSeats(flight.seats_amount, flight.seats)}
                         </Checkbox.Group>
                     </Form.Item>
                     <h3>Total price: {total}$</h3>

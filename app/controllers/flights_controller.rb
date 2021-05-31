@@ -3,7 +3,13 @@ class FlightsController < ApplicationController
 
   # GET /flights or /flights.json
   def index
-    @flights = Flight.all
+    if params[:ids] && !params[:ids].empty?
+      @flights = Flight.where(id: params[:ids]).paginate(page: params[:page], per_page: 10)
+      @total = @flights.length
+    else
+      @flights = Flight.all.paginate(page: params[:page], per_page: 10)
+      @total = Flight.all.length
+    end
   end
 
   # GET /flights/1 or /flights/1.json
@@ -11,13 +17,9 @@ class FlightsController < ApplicationController
     @flight = Flight.find_by(id: params[:id])
   end
 
-  # GET /flights/new
-  def new
-    @flight = Flight.new
-  end
-
-  # GET /flights/1/edit
-  def edit
+  def search
+    search = params[:query].downcase
+    @flights = Flight.where("LOWER(origin) LIKE ? OR LOWER(destination) LIKE ?", "%#{search}%", "%#{search}%")
   end
 
   # POST /flights or /flights.json
@@ -56,13 +58,14 @@ class FlightsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_flight
-      @flight = Flight.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def flight_params
-      params.require(:data).permit(:arrival_time, :take_off_time, :destination, :origin, :seats_amount, :query)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_flight
+    @flight = Flight.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def flight_params
+    params.require(:data).permit(:arrival_time, :take_off_time, :destination, :origin, :seats_amount, :query, :ids)
+  end
 end

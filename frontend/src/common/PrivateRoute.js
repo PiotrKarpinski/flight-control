@@ -30,7 +30,7 @@ class PrivateRoute extends Component {
                     loaded: true,
                 });
             } else {
-                history.push('/');
+                history.push('/login');
             }
         })
 

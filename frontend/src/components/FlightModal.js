@@ -25,6 +25,7 @@ const FlightModal = (props) => {
         postData(flight, 'flights', () => {
             setConfirmLoading(false)
             close()
+            handleAdd()
         })
     };
 
@@ -51,7 +52,7 @@ const FlightModal = (props) => {
 
     }
 
-    const {close, show} = props
+    const {close, show, handleAdd} = props
 
     return (
         <Modal

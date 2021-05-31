@@ -14,20 +14,22 @@ class Flights extends React.Component {
         initLoading: true,
         loading: false,
         data: [],
-        flightModal: false
+        flightModal: false,
+        page: 1
     };
 
     componentDidMount() {
-        this.getData(res => {
+        this.getData(this.state.page, null, res => {
             this.setState({
                 initLoading: false,
-                data: res,
+                data: res.content,
+                total: res.total
             });
         });
     }
 
-    getData = callback => {
-        fetchAllData('flights', (result) => {
+    getData = (page = null, ids=null, callback) => {
+        fetchAllData('flights', page, ids, (result) => {
             callback(result)
         })
     };
@@ -69,21 +71,43 @@ class Flights extends React.Component {
     }
 
     render() {
-        const {initLoading, loading, data, flightModal} = this.state;
+        const {initLoading, loading, data, flightModal, page, total} = this.state;
         const {role} = this.props;
 
         return (
             <>
                 <Row>
                     <Col span={4} offset={10}>
-                        <SearchFlights/>
+                        <SearchFlights onSelect={(ids) => this.getData(1, ids, (res) => {
+                            this.setState({
+                                data: res.content,
+                                total: res.total
+                            });
+                        })}/>
                     </Col>
                     {role === 'admin' && <Col span={4} offset={6}>
                         {this.renderFlightModalButton()}
                     </Col>}
                 </Row>
-                {flightModal && <FlightModal show={flightModal} close={() => this.setState({flightModal: false})}/>}
+                {flightModal && <FlightModal handleAdd={() => this.getData(page, null,(result) => {
+                    this.setState({
+                        data: result.content,
+                    });
+                })} show={flightModal} close={() => this.setState({flightModal: false})}/>}
                 <List
+                    pagination={{
+                        onChange: page => {
+                            this.getData(page, [], (result) => {
+                                this.setState({
+                                    page: page,
+                                    data: result.content,
+                                })
+                            })
+                        },
+                        pageSize: 10,
+                        current: page,
+                        total: total
+                    }}
                     bordered
                     split
                     style={{marginTop: '48px'}}
@@ -94,15 +118,16 @@ class Flights extends React.Component {
                         <List.Item
                             actions={[role === 'admin' && this.renderFlightModalButton(true), this.renderBookButton(item.id)]}
                         >
-                                <List.Item.Meta
-                                    description={this.renderFlightDescription(item)}
-                                />
+                            <List.Item.Meta
+                                description={this.renderFlightDescription(item)}
+                            />
                         </List.Item>
                     )}
                 />
             </>
         );
     }
+
 }
 
 export default Flights;

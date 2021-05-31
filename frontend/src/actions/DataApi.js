@@ -13,9 +13,9 @@ export const fetchData = (id, resourceName, callback) => {
         .catch(error => console.log('api errors:', error))
 }
 
-export const fetchAllData = (resourceName, callback) => {
+export const fetchAllData = (resourceName, page = null, ids, callback) => {
     axios.get(`http://localhost:3001/${resourceName}`,
-        {withCredentials: true})
+        {withCredentials: true, params: {page, ids}})
         .then(response => {
             if (response.data) {
                 callback(response.data)
@@ -28,7 +28,7 @@ export const fetchAllData = (resourceName, callback) => {
 
 
 export const fetchSelectData = (resourceName, q, callback) => {
-        axios.get(`http://localhost:3001/${resourceName}`,
+        axios.get(`http://localhost:3001/${resourceName}/search`,
             {withCredentials: true, params: {query: q}})
             .then(response => {
                 callback(response.data)

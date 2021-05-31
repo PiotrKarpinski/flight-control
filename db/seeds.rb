@@ -6,8 +6,14 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 #
+#
+date = DateTime.now
 
-UserRole.create([{ name: 'admin'}, { name: 'user'}])
+random_flight = {
+
+  }
+
+UserRole.create([{ name: 'admin' }, { name: 'user' }])
 admin_role_id = UserRole.find_by_name('admin').id
 User.create({
               first_name: 'Admin',
@@ -16,3 +22,11 @@ User.create({
               password: 'admin123',
               user_role_id: admin_role_id
             })
+
+100.times do |_x|
+  Flight.create(origin: Faker::Address.city,
+                destination: Faker::Address.city,
+                seats_amount: 24,
+                arrival_time: date,
+                take_off_time: date)
+end
