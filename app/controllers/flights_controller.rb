@@ -3,6 +3,7 @@ class FlightsController < ApplicationController
 
   # GET /flights or /flights.json
   def index
+
     if params[:ids] && !params[:ids].empty?
       @flights = Flight.where(id: params[:ids]).paginate(page: params[:page], per_page: 10)
       @total = @flights.length

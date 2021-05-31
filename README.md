@@ -1,24 +1,12 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+email: 'admin@admin.com',
+password: 'admin123',
 
-Things you may want to cover:
+Things to do:
 
-* Ruby version
+add update/delete flights for admin
 
-* System dependencies
+prevent user from adding/updating/deleting flights
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+not display flight in list when taken seats amount is higher than available seats
