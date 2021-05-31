@@ -41,7 +41,7 @@ class Home extends React.Component {
                             Log in
                         </Menu.Item>}
                         {loggedIn && <Menu.Item onClick={() => {logout(() => {
-                                this.setState({user: null, loggedIn: false})})}} key={"2"}>
+                                this.setState({user: null, loggedIn: false, role: 'visitor'})})}} key={"2"}>
                             Log out
                         </Menu.Item>}
                     </Menu>

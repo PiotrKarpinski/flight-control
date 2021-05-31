@@ -45,10 +45,10 @@ class Flights extends React.Component {
         )
     }
 
-    renderFlightModalButton = (editMode = false) => {
+    renderFlightModalButton = (editMode = false, flight = null) => {
         return (
             <Button
-                onClick={() => this.setState({flightModal: true})}
+                onClick={() => this.setState({flightModal: true, flight: flight})}
                 type="primary"
                 shape="round"
                 size={'middle'}
@@ -71,7 +71,7 @@ class Flights extends React.Component {
     }
 
     render() {
-        const {initLoading, loading, data, flightModal, page, total} = this.state;
+        const {initLoading, loading, data, flightModal, page, total, flight} = this.state;
         const {role} = this.props;
 
         return (
@@ -89,7 +89,7 @@ class Flights extends React.Component {
                         {this.renderFlightModalButton()}
                     </Col>}
                 </Row>
-                {flightModal && <FlightModal handleAdd={() => this.getData(page, null,(result) => {
+                {flightModal && <FlightModal flight={flight} handleAdd={() => this.getData(page, null,(result) => {
                     this.setState({
                         data: result.content,
                     });
@@ -116,7 +116,7 @@ class Flights extends React.Component {
                     dataSource={data}
                     renderItem={item => (
                         <List.Item
-                            actions={[role === 'admin' && this.renderFlightModalButton(true), this.renderBookButton(item.id)]}
+                            actions={[role === 'admin' && this.renderFlightModalButton(true, item), this.renderBookButton(item.id)]}
                         >
                             <List.Item.Meta
                                 description={this.renderFlightDescription(item)}

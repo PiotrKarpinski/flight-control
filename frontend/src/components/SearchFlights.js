@@ -34,9 +34,13 @@ const SearchFlights = (props) => {
             value={value}
             placeholder="Search flights"
             onSelect={(newValue) => {
-                setValue(newValue);
+                setValue([newValue]);
                 const id = newValue.value
                 onSelect(id);
+            }}
+            onDeselect={() => {
+                setValue([])
+                onSelect(null)
             }}
             style={{
                 width: '100%',
